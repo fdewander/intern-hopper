@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -39,3 +40,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # intern-hopper
 Web app for sharing projects, tracking progress of what interns are working on and collaborating on new ideas.
 >>>>>>> 836bd2e3a0edecabd0df433cfd97951191137f9d
+=======
+# intern-hopper
+>>>>>>> 7320ce0af8f58d6d690c79d7925041eaa6992c73
