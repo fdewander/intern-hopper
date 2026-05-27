@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
-// Type definitions for our data
 type Project = {
   id: string
   title: string
@@ -13,11 +12,13 @@ type Project = {
   owner_id: string
   owner_name: string
   repo: string | null
+  live_url: string | null
   tags: string[]
   progress: number
   created_at: string
   vote_count?: number
   user_has_voted?: boolean
+  top_comments?: { content: string; user_name: string }[]
 }
 
 export default function HomePage() {
@@ -29,13 +30,9 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'backlog' | 'idea'>('all')
 
   useEffect(() => {
-    // Get current logged in user
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
+      if (!user) { router.push('/login'); return }
       setUser(user)
       await fetchProjects(user.id)
       setLoading(false)
@@ -44,7 +41,6 @@ export default function HomePage() {
   }, [])
 
   const fetchProjects = async (userId: string) => {
-    // Fetch all projects
     const { data: projectsData } = await supabase
       .from('projects')
       .select('*')
@@ -52,16 +48,25 @@ export default function HomePage() {
 
     if (!projectsData) return
 
-    // Fetch vote counts for each project
     const { data: votesData } = await supabase
       .from('votes')
       .select('project_id, user_id')
 
-    // Attach vote counts and whether current user has voted
+    // Fetch top 3 comments per project
+    const { data: commentsData } = await supabase
+      .from('comments')
+      .select('project_id, content, user_name, created_at')
+      .order('created_at', { ascending: true })
+
     const enriched = projectsData.map(p => ({
       ...p,
       vote_count: votesData?.filter(v => v.project_id === p.id).length || 0,
-      user_has_voted: votesData?.some(v => v.project_id === p.id && v.user_id === userId) || false
+      user_has_voted: votesData?.some(v => v.project_id === p.id && v.user_id === userId) || false,
+      // Get first 3 comments for this project
+      top_comments: commentsData
+        ?.filter(c => c.project_id === p.id)
+        .slice(0, 3)
+        .map(c => ({ content: c.content, user_name: c.user_name })) || []
     }))
 
     setProjects(enriched)
@@ -69,21 +74,11 @@ export default function HomePage() {
 
   const handleVote = async (projectId: string, hasVoted: boolean) => {
     if (!user) return
-
     if (hasVoted) {
-      // Remove vote
-      await supabase
-        .from('votes')
-        .delete()
-        .match({ project_id: projectId, user_id: user.id })
+      await supabase.from('votes').delete().match({ project_id: projectId, user_id: user.id })
     } else {
-      // Add vote
-      await supabase
-        .from('votes')
-        .insert({ project_id: projectId, user_id: user.id })
+      await supabase.from('votes').insert({ project_id: projectId, user_id: user.id })
     }
-
-    // Refresh projects
     await fetchProjects(user.id)
   }
 
@@ -92,7 +87,7 @@ export default function HomePage() {
     router.push('/login')
   }
 
-  const filtered = projects.filter(p => 
+  const filtered = projects.filter(p =>
     activeFilter === 'all' ? true : p.status === activeFilter
   )
 
@@ -198,7 +193,7 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* Progress bar (active only) */}
+                {/* Progress bar */}
                 {project.status === 'active' && (
                   <div>
                     <div className="bg-zinc-800 rounded-full h-1.5">
@@ -211,23 +206,50 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* Repo */}
+                {/* Repo link — clickable */}
                 {project.repo && (
-                  <div className="bg-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-400 font-mono">
-                    ⎇ {project.repo}
+                  <a
+                    href={`${project.repo}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="bg-zinc-800 hover:bg-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-400 font-mono transition-colors flex items-center gap-2"
+                  >
+                  ⎇ {project.repo} ↗
+                </a>
+                )}
+
+                {/* Live site link — clickable */}
+                {project.live_url && (
+                  <a
+                    href={project.live_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-emerald-950 hover:bg-emerald-900 border border-emerald-900 rounded-lg px-3 py-2 text-xs text-emerald-400 transition-colors flex items-center gap-2"
+                  >
+                  🌐 {project.live_url} ↗
+                  </a>
+                )}
+
+                {/* Top 3 comments preview */}
+                {project.top_comments && project.top_comments.length > 0 && (
+                  <div className="flex flex-col gap-2 border-t border-zinc-800 pt-3">
+                    <p className="text-zinc-600 text-xs uppercase tracking-wider">Comments</p>
+                    {project.top_comments.map((c, i) => (
+                      <div key={i} className="flex flex-col gap-0.5">
+                        <p className="text-zinc-600 text-xs">{c.user_name}</p>
+                        <p className="text-zinc-400 text-xs line-clamp-1">{c.content}</p>
+                      </div>
+                    ))}
                   </div>
                 )}
 
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
-                  <span className="text-zinc-600 text-xs">{project.owner_name}</span>
-                  <button
-                    onClick={() => router.push(`/projects/${project.id}`)}
-                    className="text-zinc-500 text-xs hover:text-white transition-colors"
-                  >
-                    View →
-                  </button>
-                </div>
+                {/* View button — bigger and more prominent */}
+                <button
+                  onClick={() => router.push(`/projects/${project.id}`)}
+                  className="w-full mt-1 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2.5 rounded-lg transition-colors text-sm"
+                >
+                  View Project →
+                </button>
               </div>
             ))}
           </div>

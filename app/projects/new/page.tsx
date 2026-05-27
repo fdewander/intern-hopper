@@ -15,6 +15,7 @@ export default function NewProjectPage() {
     repo: '',
     tags: '',
     progress: 0,
+    live_url: '',
   })
 
   const handleSubmit = async () => {
@@ -31,6 +32,7 @@ export default function NewProjectPage() {
       description: form.description,
       status: form.status,
       repo: form.repo || null,
+      live_url: form.live_url || null,
       tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       progress: form.progress,
       owner_id: user.id,
@@ -131,6 +133,17 @@ export default function NewProjectPage() {
             value={form.repo}
             onChange={e => setForm(f => ({ ...f, repo: e.target.value }))}
           />
+        </div>
+
+        {/* Live site URL */}
+        <div className="flex flex-col gap-2">
+        <label className="text-xs uppercase tracking-wider text-zinc-500">Live Site URL (optional)</label>
+        <input
+            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 text-sm"
+            placeholder="e.g. https://intern-hopper.vercel.app"
+            value={form.live_url}
+            onChange={e => setForm(f => ({ ...f, live_url: e.target.value }))}
+        />
         </div>
 
         {/* Tags */}

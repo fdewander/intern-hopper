@@ -17,6 +17,7 @@ export default function EditProjectPage() {
     repo: '',
     tags: '',
     progress: 0,
+    live_url: '',
   })
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function EditProjectPage() {
         repo: project.repo || '',
         tags: project.tags?.join(', ') || '',
         progress: project.progress || 0,
+        live_url: project.live_url || '',
       })
       setLoading(false)
     }
@@ -55,6 +57,7 @@ export default function EditProjectPage() {
       title: form.title,
       description: form.description,
       status: form.status,
+      live_url: form.live_url || null,
       repo: form.repo || null,
       tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       progress: form.progress,
@@ -157,6 +160,17 @@ export default function EditProjectPage() {
             value={form.repo}
             onChange={e => setForm(f => ({ ...f, repo: e.target.value }))}
           />
+        </div>
+
+        {/* Live site URL */}
+        <div className="flex flex-col gap-2">
+        <label className="text-xs uppercase tracking-wider text-zinc-500">Live Site URL (optional)</label>
+        <input
+            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 text-sm"
+            placeholder="e.g. https://intern-hopper.vercel.app"
+            value={form.live_url}
+            onChange={e => setForm(f => ({ ...f, live_url: e.target.value }))}
+        />
         </div>
 
         {/* Tags */}
