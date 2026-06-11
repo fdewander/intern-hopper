@@ -137,18 +137,18 @@ function ProjectsList() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <p className="text-zinc-500">Loading...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-zinc-400 text-sm">Loading...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="border-b border-zinc-800 px-8 py-4 flex items-center gap-4">
+    <div className="min-h-screen bg-white text-zinc-900">
+      <header className="border-b border-zinc-200 px-8 py-4 flex items-center gap-4">
         <button
           onClick={() => router.push('/')}
-          className="text-zinc-500 hover:text-white transition-colors text-sm"
+          className="text-zinc-400 hover:text-zinc-900 transition-colors text-sm"
         >
           ← Home
         </button>
@@ -157,7 +157,7 @@ function ProjectsList() {
 
         <button
           onClick={() => router.push('/projects/new')}
-          className="ml-auto bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
+          className="ml-auto bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-700 transition-colors"
         >
           + New Project
         </button>
@@ -173,8 +173,8 @@ function ProjectsList() {
                 onClick={() => setActiveFilter(filter)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
                   activeFilter === filter
-                    ? 'bg-white text-black'
-                    : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+                    ? 'bg-zinc-900 text-white'
+                    : 'bg-white text-zinc-500 hover:text-zinc-900 border border-zinc-200'
                 }`}
               >
                 {filter}
@@ -185,7 +185,7 @@ function ProjectsList() {
 
         {/* Projects grid */}
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-zinc-600">
+          <div className="text-center py-20 text-zinc-400">
             No projects here yet
           </div>
         ) : (
@@ -193,17 +193,17 @@ function ProjectsList() {
             {filtered.map((project) => (
               <div
                 key={project.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex flex-col gap-3 hover:border-zinc-700 transition-colors"
+                className="bg-white border border-zinc-200 rounded-xl p-5 flex flex-col gap-3 hover:border-zinc-400 transition-colors"
               >
                 {/* Status + vote */}
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full ${
                       project.status === 'active'
-                        ? 'bg-emerald-950 text-emerald-400'
+                        ? 'bg-teal-100 text-teal-700'
                         : project.status === 'backlog'
-                        ? 'bg-amber-950 text-amber-400'
-                        : 'bg-purple-950 text-purple-400'
+                        ? 'bg-amber-100 text-amber-700'
+                        : 'bg-violet-100 text-violet-700'
                     }`}
                   >
                     {project.status}
@@ -218,8 +218,8 @@ function ProjectsList() {
                     }
                     className={`flex items-center gap-1 text-sm px-3 py-1 rounded-lg border transition-colors ${
                       project.user_has_voted
-                        ? 'border-purple-500 text-purple-400 bg-purple-950'
-                        : 'border-zinc-700 text-zinc-400 hover:border-zinc-500'
+                        ? 'border-violet-300 text-violet-600 bg-violet-50'
+                        : 'border-zinc-200 text-zinc-400 hover:border-zinc-400'
                     }`}
                   >
                     ▲ {project.vote_count ?? 0}
@@ -228,7 +228,7 @@ function ProjectsList() {
 
                 {/* Title + description */}
                 <div>
-                  <h3 className="font-bold text-white">
+                  <h3 className="font-bold text-zinc-900">
                     {project.title}
                   </h3>
                   <p className="text-zinc-500 text-sm mt-1 line-clamp-2">
@@ -242,7 +242,7 @@ function ProjectsList() {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded"
+                        className="text-xs bg-zinc-100 text-zinc-500 px-2 py-1 rounded"
                       >
                         {tag}
                       </span>
@@ -253,16 +253,16 @@ function ProjectsList() {
                 {/* Progress */}
                 {project.status === 'active' && (
                   <div>
-                    <div className="bg-zinc-800 rounded-full h-1.5">
+                    <div className="bg-zinc-100 rounded-full h-1.5">
                       <div
-                        className="bg-emerald-400 h-1.5 rounded-full transition-all"
+                        className="bg-teal-500 h-1.5 rounded-full transition-all"
                         style={{
                           width: `${project.progress}%`,
                         }}
                       />
                     </div>
 
-                    <p className="text-zinc-600 text-xs mt-1">
+                    <p className="text-zinc-400 text-xs mt-1">
                       {project.progress}% complete
                     </p>
                   </div>
@@ -274,7 +274,7 @@ function ProjectsList() {
                     href={`https://github.com/${project.repo}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-zinc-800 hover:bg-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-400 font-mono transition-colors flex items-center gap-2"
+                    className="bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg px-3 py-2 text-xs text-zinc-500 font-mono transition-colors flex items-center gap-2"
                   >
                     ⎇ {project.repo} ↗
                   </a>
@@ -286,7 +286,7 @@ function ProjectsList() {
                     href={project.live_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-emerald-950 hover:bg-emerald-900 border border-emerald-900 rounded-lg px-3 py-2 text-xs text-emerald-400 transition-colors flex items-center gap-2"
+                    className="bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg px-3 py-2 text-xs text-teal-700 transition-colors flex items-center gap-2"
                   >
                     🌐 {project.live_url} ↗
                   </a>
@@ -295,8 +295,8 @@ function ProjectsList() {
                 {/* Top comments */}
                 {project.top_comments &&
                   project.top_comments.length > 0 && (
-                    <div className="flex flex-col gap-2 border-t border-zinc-800 pt-3">
-                      <p className="text-zinc-600 text-xs uppercase tracking-wider">
+                    <div className="flex flex-col gap-2 border-t border-zinc-100 pt-3">
+                      <p className="text-zinc-400 text-xs uppercase tracking-wider">
                         Comments
                       </p>
 
@@ -305,11 +305,11 @@ function ProjectsList() {
                           key={index}
                           className="flex flex-col gap-0.5"
                         >
-                          <p className="text-zinc-600 text-xs">
+                          <p className="text-zinc-400 text-xs">
                             {comment.user_name}
                           </p>
 
-                          <p className="text-zinc-400 text-xs line-clamp-1">
+                          <p className="text-zinc-500 text-xs line-clamp-1">
                             {comment.content}
                           </p>
                         </div>
@@ -322,7 +322,7 @@ function ProjectsList() {
                   onClick={() =>
                     router.push(`/projects/${project.id}`)
                   }
-                  className="w-full mt-1 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2.5 rounded-lg transition-colors text-sm"
+                  className="w-full mt-1 bg-zinc-900 hover:bg-zinc-700 text-white font-medium py-2.5 rounded-lg transition-colors text-sm"
                 >
                   View Project →
                 </button>
@@ -339,8 +339,8 @@ export default function ProjectsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-black flex items-center justify-center">
-          <p className="text-zinc-500">Loading...</p>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <p className="text-zinc-400 text-sm">Loading...</p>
         </div>
       }
     >

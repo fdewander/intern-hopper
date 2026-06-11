@@ -33,10 +33,8 @@ export default function EditProjectPage() {
 
       if (!project) { router.push('/'); return }
 
-      // Redirect if not owner
       if (project.owner_id !== user.id) { router.push(`/projects/${id}`); return }
 
-      // Pre-fill form with existing values
       setForm({
         title: project.title || '',
         description: project.description || '',
@@ -74,17 +72,17 @@ export default function EditProjectPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <p className="text-zinc-500">Loading...</p>
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <p className="text-zinc-400 text-sm">Loading...</p>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="border-b border-zinc-800 px-8 py-4 flex items-center gap-4">
+    <div className="min-h-screen bg-white text-zinc-900">
+      <header className="border-b border-zinc-200 px-8 py-4 flex items-center gap-4">
         <button
           onClick={() => router.push(`/projects/${id}`)}
-          className="text-zinc-500 hover:text-white transition-colors text-sm"
+          className="text-zinc-400 hover:text-zinc-900 transition-colors text-sm"
         >
           ← Back
         </button>
@@ -96,7 +94,7 @@ export default function EditProjectPage() {
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wider text-zinc-500">Title *</label>
           <input
-            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600"
+            className="bg-white border border-zinc-200 rounded-lg px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400"
             value={form.title}
             onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           />
@@ -106,7 +104,7 @@ export default function EditProjectPage() {
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wider text-zinc-500">Description</label>
           <textarea
-            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 resize-none h-28"
+            className="bg-white border border-zinc-200 rounded-lg px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 resize-none h-28"
             value={form.description}
             onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
           />
@@ -122,10 +120,10 @@ export default function EditProjectPage() {
                 onClick={() => setForm(f => ({ ...f, status: s }))}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize border transition-colors ${
                   form.status === s
-                    ? s === 'active' ? 'bg-emerald-950 border-emerald-500 text-emerald-400'
-                      : s === 'backlog' ? 'bg-amber-950 border-amber-500 text-amber-400'
-                      : 'bg-purple-950 border-purple-500 text-purple-400'
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white'
+                    ? s === 'active' ? 'bg-teal-50 border-teal-400 text-teal-700'
+                      : s === 'backlog' ? 'bg-amber-50 border-amber-400 text-amber-700'
+                      : 'bg-violet-50 border-violet-400 text-violet-700'
+                    : 'bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900'
                 }`}
               >
                 {s}
@@ -146,7 +144,7 @@ export default function EditProjectPage() {
               max={100}
               value={form.progress}
               onChange={e => setForm(f => ({ ...f, progress: parseInt(e.target.value) }))}
-              className="accent-emerald-400"
+              className="accent-teal-500"
             />
           </div>
         )}
@@ -155,7 +153,7 @@ export default function EditProjectPage() {
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wider text-zinc-500">GitHub Repo (optional)</label>
           <input
-            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 font-mono text-sm"
+            className="bg-white border border-zinc-200 rounded-lg px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 font-mono text-sm"
             placeholder="e.g. Phrasia-Ltd/intern-hopper"
             value={form.repo}
             onChange={e => setForm(f => ({ ...f, repo: e.target.value }))}
@@ -164,20 +162,20 @@ export default function EditProjectPage() {
 
         {/* Live site URL */}
         <div className="flex flex-col gap-2">
-        <label className="text-xs uppercase tracking-wider text-zinc-500">Live Site URL (optional)</label>
-        <input
-            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 text-sm"
+          <label className="text-xs uppercase tracking-wider text-zinc-500">Live Site URL (optional)</label>
+          <input
+            className="bg-white border border-zinc-200 rounded-lg px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400 text-sm"
             placeholder="e.g. https://intern-hopper.vercel.app"
             value={form.live_url}
             onChange={e => setForm(f => ({ ...f, live_url: e.target.value }))}
-        />
+          />
         </div>
 
         {/* Tags */}
         <div className="flex flex-col gap-2">
           <label className="text-xs uppercase tracking-wider text-zinc-500">Tags (comma separated)</label>
           <input
-            className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600"
+            className="bg-white border border-zinc-200 rounded-lg px-4 py-3 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-400"
             value={form.tags}
             onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
           />
@@ -187,7 +185,7 @@ export default function EditProjectPage() {
         <button
           onClick={handleSave}
           disabled={saving || !form.title.trim()}
-          className="bg-white text-black font-semibold py-3 rounded-lg hover:bg-zinc-100 transition-colors disabled:opacity-50"
+          className="bg-zinc-900 text-white font-semibold py-3 rounded-lg hover:bg-zinc-700 transition-colors disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>

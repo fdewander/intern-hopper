@@ -73,7 +73,6 @@ export default function ProjectPage() {
   }, [id])
 
   const fetchAll = async (userId: string) => {
-    // Fetch project
     const { data: proj } = await supabase
       .from('projects')
       .select('*')
@@ -81,7 +80,6 @@ export default function ProjectPage() {
       .single()
     setProject(proj)
 
-    // Fetch comments
     const { data: comms } = await supabase
       .from('comments')
       .select('*')
@@ -89,7 +87,6 @@ export default function ProjectPage() {
       .order('created_at', { ascending: true })
     setComments(comms || [])
 
-    // Fetch suggestions
     const { data: suggs } = await supabase
       .from('suggestions')
       .select('*')
@@ -130,7 +127,6 @@ export default function ProjectPage() {
 
   const reviewSuggestion = async (suggId: string, action: 'approved' | 'rejected', sugg: Suggestion) => {
     if (action === 'approved' && project) {
-      // Apply the suggested changes to the project
       await supabase.from('projects').update({
         ...(sugg.title && { title: sugg.title }),
         ...(sugg.description && { description: sugg.description }),
@@ -142,7 +138,6 @@ export default function ProjectPage() {
       }).eq('id', project.id)
     }
 
-    // Update suggestion status
     await supabase.from('suggestions').update({
       suggestion_status: action,
       reviewer_note: reviewNote || null,
@@ -159,14 +154,14 @@ export default function ProjectPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <p className="text-zinc-500">Loading...</p>
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <p className="text-zinc-400 text-sm">Loading...</p>
     </div>
   )
 
   if (!project) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <p className="text-zinc-500">Project not found</p>
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <p className="text-zinc-400 text-sm">Project not found</p>
     </div>
   )
 
@@ -175,12 +170,11 @@ export default function ProjectPage() {
   const reviewedSuggestions = suggestions.filter(s => s.suggestion_status !== 'pending')
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-zinc-800 px-8 py-4 flex items-center gap-4">
+    <div className="min-h-screen bg-white text-zinc-900">
+      <header className="border-b border-zinc-200 px-8 py-4 flex items-center gap-4">
         <button
           onClick={() => router.push('/')}
-          className="text-zinc-500 hover:text-white transition-colors text-sm"
+          className="text-zinc-400 hover:text-zinc-900 transition-colors text-sm"
         >
           ← Back
         </button>
@@ -188,7 +182,7 @@ export default function ProjectPage() {
         {isOwner && (
           <button
             onClick={() => router.push(`/projects/${id}/edit`)}
-            className="ml-auto text-sm bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-lg transition-colors"
+            className="ml-auto text-sm bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-4 py-2 rounded-lg transition-colors"
           >
             Edit Project
           </button>
@@ -201,22 +195,22 @@ export default function ProjectPage() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <span className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full ${
-              project.status === 'active' ? 'bg-emerald-950 text-emerald-400' :
-              project.status === 'backlog' ? 'bg-amber-950 text-amber-400' :
-              'bg-purple-950 text-purple-400'
+              project.status === 'active' ? 'bg-teal-100 text-teal-700' :
+              project.status === 'backlog' ? 'bg-amber-100 text-amber-700' :
+              'bg-violet-100 text-violet-700'
             }`}>
               {project.status}
             </span>
-            <span className="text-zinc-600 text-sm">by {project.owner_name}</span>
+            <span className="text-zinc-500 text-sm">by {project.owner_name}</span>
           </div>
 
-          <p className="text-zinc-300 leading-relaxed">{project.description}</p>
+          <p className="text-zinc-700 leading-relaxed">{project.description}</p>
 
           {/* Tags */}
           {project.tags?.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {project.tags.map(tag => (
-                <span key={tag} className="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded">
+                <span key={tag} className="text-xs bg-zinc-100 text-zinc-500 px-2 py-1 rounded">
                   {tag}
                 </span>
               ))}
@@ -226,19 +220,19 @@ export default function ProjectPage() {
           {/* Progress */}
           {project.status === 'active' && (
             <div>
-              <div className="bg-zinc-800 rounded-full h-1.5">
+              <div className="bg-zinc-100 rounded-full h-1.5">
                 <div
-                  className="bg-emerald-400 h-1.5 rounded-full"
+                  className="bg-teal-500 h-1.5 rounded-full"
                   style={{ width: `${project.progress}%` }}
                 />
               </div>
-              <p className="text-zinc-600 text-xs mt-1">{project.progress}% complete</p>
+              <p className="text-zinc-400 text-xs mt-1">{project.progress}% complete</p>
             </div>
           )}
 
           {/* Repo */}
           {project.repo && (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-sm text-zinc-400 font-mono">
+            <div className="bg-zinc-50 border border-zinc-200 rounded-lg px-4 py-3 text-sm text-zinc-500 font-mono">
               ⎇ {project.repo}
             </div>
           )}
@@ -248,7 +242,7 @@ export default function ProjectPage() {
         {!isOwner && (
           <button
             onClick={() => setShowSuggestForm(!showSuggestForm)}
-            className="self-start text-sm bg-zinc-900 border border-zinc-700 hover:border-zinc-500 px-4 py-2 rounded-lg transition-colors"
+            className="self-start text-sm bg-white border border-zinc-200 hover:border-zinc-400 text-zinc-700 px-4 py-2 rounded-lg transition-colors"
           >
             {showSuggestForm ? 'Cancel' : '✏️ Suggest an Edit'}
           </button>
@@ -256,8 +250,8 @@ export default function ProjectPage() {
 
         {/* Suggest edit form */}
         {showSuggestForm && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col gap-4">
-            <h3 className="font-semibold">Suggest changes — only fill in what you want to change</h3>
+          <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 flex flex-col gap-4">
+            <h3 className="font-semibold text-zinc-900">Suggest changes — only fill in what you want to change</h3>
             {[
               { label: 'Title', key: 'title', placeholder: 'Suggest a new title' },
               { label: 'Description', key: 'description', placeholder: 'Suggest a new description' },
@@ -268,7 +262,7 @@ export default function ProjectPage() {
               <div key={field.key} className="flex flex-col gap-1">
                 <label className="text-xs uppercase tracking-wider text-zinc-500">{field.label}</label>
                 <input
-                  className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-zinc-500"
+                  className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none focus:border-zinc-400"
                   placeholder={field.placeholder}
                   value={suggestion[field.key as keyof typeof suggestion]}
                   onChange={e => setSuggestion(s => ({ ...s, [field.key]: e.target.value }))}
@@ -284,8 +278,8 @@ export default function ProjectPage() {
                     onClick={() => setSuggestion(sg => ({ ...sg, status: s }))}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize border transition-colors ${
                       suggestion.status === s
-                        ? 'bg-white text-black border-white'
-                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-white'
+                        ? 'bg-zinc-900 text-white border-zinc-900'
+                        : 'bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900'
                     }`}
                   >
                     {s || 'no change'}
@@ -295,7 +289,7 @@ export default function ProjectPage() {
             </div>
             <button
               onClick={submitSuggestion}
-              className="bg-white text-black font-semibold py-2 rounded-lg hover:bg-zinc-100 transition-colors text-sm"
+              className="bg-zinc-900 text-white font-semibold py-2 rounded-lg hover:bg-zinc-700 transition-colors text-sm"
             >
               Submit Suggestion
             </button>
@@ -307,23 +301,23 @@ export default function ProjectPage() {
           <div className="flex flex-col gap-4">
             <h2 className="font-bold text-lg">
               Pending Suggestions
-              <span className="ml-2 text-sm bg-amber-950 text-amber-400 px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-sm bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
                 {pendingSuggestions.length}
               </span>
             </h2>
             {pendingSuggestions.map(s => (
-              <div key={s.id} className="bg-zinc-900 border border-amber-900 rounded-xl p-5 flex flex-col gap-3">
-                <p className="text-zinc-400 text-sm">From {s.suggested_by_name}</p>
-                <div className="flex flex-col gap-1 text-sm">
-                  {s.title && <p><span className="text-zinc-500">Title:</span> {s.title}</p>}
-                  {s.description && <p><span className="text-zinc-500">Description:</span> {s.description}</p>}
-                  {s.status && <p><span className="text-zinc-500">Status:</span> {s.status}</p>}
-                  {s.repo && <p><span className="text-zinc-500">Repo:</span> {s.repo}</p>}
-                  {s.tags && <p><span className="text-zinc-500">Tags:</span> {s.tags.join(', ')}</p>}
-                  {s.progress !== null && <p><span className="text-zinc-500">Progress:</span> {s.progress}%</p>}
+              <div key={s.id} className="bg-amber-50 border border-amber-200 rounded-xl p-5 flex flex-col gap-3">
+                <p className="text-zinc-500 text-sm">From {s.suggested_by_name}</p>
+                <div className="flex flex-col gap-1 text-sm text-zinc-700">
+                  {s.title && <p><span className="text-zinc-400">Title:</span> {s.title}</p>}
+                  {s.description && <p><span className="text-zinc-400">Description:</span> {s.description}</p>}
+                  {s.status && <p><span className="text-zinc-400">Status:</span> {s.status}</p>}
+                  {s.repo && <p><span className="text-zinc-400">Repo:</span> {s.repo}</p>}
+                  {s.tags && <p><span className="text-zinc-400">Tags:</span> {s.tags.join(', ')}</p>}
+                  {s.progress !== null && <p><span className="text-zinc-400">Progress:</span> {s.progress}%</p>}
                 </div>
                 <input
-                  className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-600 text-sm focus:outline-none"
+                  className="bg-white border border-zinc-200 rounded-lg px-3 py-2 text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none focus:border-zinc-400"
                   placeholder="Optional note to reviewer (shown if rejected)"
                   value={reviewNote}
                   onChange={e => setReviewNote(e.target.value)}
@@ -331,13 +325,13 @@ export default function ProjectPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => reviewSuggestion(s.id, 'approved', s)}
-                    className="flex-1 bg-emerald-950 border border-emerald-700 text-emerald-400 font-semibold py-2 rounded-lg hover:bg-emerald-900 transition-colors text-sm"
+                    className="flex-1 bg-teal-50 border border-teal-300 text-teal-700 font-semibold py-2 rounded-lg hover:bg-teal-100 transition-colors text-sm"
                   >
                     ✓ Approve
                   </button>
                   <button
                     onClick={() => reviewSuggestion(s.id, 'rejected', s)}
-                    className="flex-1 bg-red-950 border border-red-800 text-red-400 font-semibold py-2 rounded-lg hover:bg-red-900 transition-colors text-sm"
+                    className="flex-1 bg-red-50 border border-red-200 text-red-600 font-semibold py-2 rounded-lg hover:bg-red-100 transition-colors text-sm"
                   >
                     ✕ Reject
                   </button>
@@ -352,13 +346,13 @@ export default function ProjectPage() {
           <div className="flex flex-col gap-3">
             <h2 className="font-bold text-lg">Past Suggestions</h2>
             {reviewedSuggestions.map(s => (
-              <div key={s.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-2">
+              <div key={s.id} className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-zinc-500 text-xs">From {s.suggested_by_name}</p>
+                  <p className="text-zinc-400 text-xs">From {s.suggested_by_name}</p>
                   <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded-full ${
                     s.suggestion_status === 'approved'
-                      ? 'bg-emerald-950 text-emerald-400'
-                      : 'bg-red-950 text-red-400'
+                      ? 'bg-teal-100 text-teal-700'
+                      : 'bg-red-100 text-red-600'
                   }`}>
                     {s.suggestion_status}
                   </span>
@@ -375,29 +369,29 @@ export default function ProjectPage() {
         <div className="flex flex-col gap-4">
           <h2 className="font-bold text-lg">Comments</h2>
           {comments.length === 0 && (
-            <p className="text-zinc-600 text-sm">No comments yet — be the first</p>
+            <p className="text-zinc-400 text-sm">No comments yet — be the first</p>
           )}
           {comments.map(c => (
-            <div key={c.id} className="flex flex-col gap-1 border-b border-zinc-900 pb-4">
+            <div key={c.id} className="flex flex-col gap-1 border-b border-zinc-100 pb-4">
               <div className="flex items-center justify-between">
-                <p className="text-zinc-500 text-xs">{c.user_name}</p>
+                <p className="text-zinc-400 text-xs">{c.user_name}</p>
                 {c.user_id === user?.id && (
                   <button
                     onClick={() => deleteComment(c.id)}
-                    className="text-zinc-700 hover:text-red-400 text-xs transition-colors"
+                    className="text-zinc-300 hover:text-red-500 text-xs transition-colors"
                   >
                     delete
                   </button>
                 )}
               </div>
-              <p className="text-zinc-300 text-sm">{c.content}</p>
+              <p className="text-zinc-700 text-sm">{c.content}</p>
             </div>
           ))}
 
           {/* Add comment */}
           <div className="flex gap-3">
             <input
-              className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2.5 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-zinc-600"
+              className="flex-1 bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-zinc-900 placeholder-zinc-400 text-sm focus:outline-none focus:border-zinc-400"
               placeholder="Leave a comment..."
               value={newComment}
               onChange={e => setNewComment(e.target.value)}
@@ -406,7 +400,7 @@ export default function ProjectPage() {
             <button
               onClick={submitComment}
               disabled={!newComment.trim()}
-              className="bg-white text-black font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors text-sm disabled:opacity-50"
+              className="bg-zinc-900 text-white font-semibold px-4 py-2 rounded-lg hover:bg-zinc-700 transition-colors text-sm disabled:opacity-50"
             >
               Post
             </button>

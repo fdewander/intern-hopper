@@ -1,64 +1,53 @@
-'use client' // This tells Next.js this component runs in the browser, not on the server
-             // Needed because we're using browser APIs like window.location
+'use client'
 
-import { createClient } from '@/lib/supabase' // Import our Supabase client we set up earlier
+import { createClient } from '@/lib/supabase'
 
 export default function LoginPage() {
-  // Create a Supabase client instance for this component
   const supabase = createClient()
 
-  // This function runs when the user clicks "Sign in with Microsoft"
   const signInWithMicrosoft = async () => {
     await supabase.auth.signInWithOAuth({
-      provider: 'azure', // Microsoft OAuth in Supabase is called "azure"
+      provider: 'azure',
       options: {
-        scopes: 'email', // Request access to the user's email address
-                         // This is how we know they're a phrasia.com account
+        scopes: 'email',
         redirectTo: `${window.location.origin}/auth/callback`,
-        // After Microsoft authenticates the user, send them to this URL
-        // which completes the login (same callback route as before)
       },
     })
-    // What happens behind the scenes:
-    // 1. User clicks button
-    // 2. Supabase redirects to Microsoft's login page
-    // 3. User signs in with their phrasia.com Microsoft account
-    // 4. Microsoft sends them back to /auth/callback with a special code
-    // 5. Our callback route exchanges that code for a session
-    // 6. User is now logged in and redirected to the main app
   }
 
   return (
-    // min-h-screen = takes up full screen height
-    // bg-black = black background
-    // flex items-center justify-center = centers everything on screen
-    <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="flex flex-col items-center gap-8 w-full max-w-sm px-8">
 
-      {/* The login card */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-12 flex flex-col items-center gap-6 w-full max-w-sm">
-
-        {/* Phrasia logo mark */}
-        <div className="text-3xl">⬡</div>
-
-        <div className="text-center">
-          <h1 className="text-white text-xl font-bold">Phrasia Hopper</h1>
-          <p className="text-zinc-500 text-sm mt-1">Sign in with your Phrasia account</p>
+        {/* Phrasia logo */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-2 border-teal-500 flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full bg-teal-500 opacity-60" />
+          </div>
+          <span className="text-2xl font-bold tracking-tight text-zinc-900">phrasia</span>
         </div>
 
-        {/* The Microsoft sign in button */}
+        <div className="text-center">
+          <h1 className="text-xl font-bold text-zinc-900">Intern Hopper</h1>
+          <p className="text-zinc-400 text-sm mt-1">Sign in with your Phrasia account to continue</p>
+        </div>
+
         <button
           onClick={signInWithMicrosoft}
-          className="w-full bg-white text-black font-semibold rounded-lg py-3 px-4 flex items-center justify-center gap-3 hover:bg-zinc-100 transition-colors"
+          className="w-full bg-zinc-900 text-white font-semibold rounded-lg py-3 px-4 flex items-center justify-center gap-3 hover:bg-zinc-700 transition-colors"
         >
-          {/* Official Microsoft logo - four colored squares */}
           <svg width="18" height="18" viewBox="0 0 21 21" fill="none">
-            <rect x="1"  y="1"  width="9" height="9" fill="#F25022"/> {/* Red square */}
-            <rect x="11" y="1"  width="9" height="9" fill="#7FBA00"/> {/* Green square */}
-            <rect x="1"  y="11" width="9" height="9" fill="#00A4EF"/> {/* Blue square */}
-            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/> {/* Yellow square */}
+            <rect x="1"  y="1"  width="9" height="9" fill="#F25022"/>
+            <rect x="11" y="1"  width="9" height="9" fill="#7FBA00"/>
+            <rect x="1"  y="11" width="9" height="9" fill="#00A4EF"/>
+            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
           </svg>
           Sign in with Microsoft
         </button>
+
+        <p className="text-zinc-300 text-xs text-center">
+          Access restricted to @phrasia.com accounts
+        </p>
       </div>
     </div>
   )

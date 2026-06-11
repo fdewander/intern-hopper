@@ -31,7 +31,6 @@ export default function HomePage() {
       if (!user) { router.push('/login'); return }
       setUser(user)
 
-      // Fetch all projects
       const { data: projects } = await supabase
         .from('projects')
         .select('id, title, owner_name, status')
@@ -43,7 +42,6 @@ export default function HomePage() {
           backlog: projects.filter(p => p.status === 'backlog').length,
           idea:    projects.filter(p => p.status === 'idea').length,
         })
-        // Show 4 most recent across all statuses
         setRecent(projects.slice(0, 4))
       }
 
@@ -63,64 +61,67 @@ export default function HomePage() {
       label: 'Active',
       description: 'Currently being built',
       count: counts.active,
-      accent: '#00e5a0',        // emerald
-      bg: 'bg-emerald-950',
-      border: 'border-emerald-800',
-      text: 'text-emerald-400',
-      hover: 'hover:border-emerald-600',
+      accent: 'text-teal-600 dark:text-teal-400',
+      bg: 'bg-teal-50 dark:bg-teal-950',
+      border: 'border-teal-200 dark:border-teal-800',
+      hover: 'hover:border-teal-400 dark:hover:border-teal-600',
+      tag: 'bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300',
     },
     {
       status: 'backlog',
       label: 'Backlog',
       description: 'Approved, not started',
       count: counts.backlog,
-      accent: '#f5a623',        // amber
-      bg: 'bg-amber-950',
-      border: 'border-amber-800',
-      text: 'text-amber-400',
-      hover: 'hover:border-amber-600',
+      accent: 'text-amber-600 dark:text-amber-400',
+      bg: 'bg-amber-50 dark:bg-amber-950',
+      border: 'border-amber-200 dark:border-amber-800',
+      hover: 'hover:border-amber-400 dark:hover:border-amber-600',
+      tag: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300',
     },
     {
       status: 'idea',
       label: 'Ideas',
       description: 'Proposed & up for discussion',
       count: counts.idea,
-      accent: '#a78bfa',        // purple
-      bg: 'bg-purple-950',
-      border: 'border-purple-800',
-      text: 'text-purple-400',
-      hover: 'hover:border-purple-600',
+      accent: 'text-violet-600 dark:text-violet-400',
+      bg: 'bg-violet-50 dark:bg-violet-950',
+      border: 'border-violet-200 dark:border-violet-800',
+      hover: 'hover:border-violet-400 dark:hover:border-violet-600',
+      tag: 'bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300',
     },
   ]
 
   if (loading) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <p className="text-zinc-500 text-sm">Loading...</p>
+    <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+      <p className="text-zinc-400 text-sm">Loading...</p>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       {/* Header */}
-      <header className="border-b border-zinc-800 px-8 py-4 flex items-center justify-between">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">⬡</span>
+          {/* Phrasia-style logo mark */}
+          <div className="w-9 h-9 rounded-full border-2 border-teal-500 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-teal-500 opacity-60" />
+          </div>
           <div>
-            <h1 className="font-bold text-lg leading-none">Phrasia Hopper</h1>
-            <p className="text-zinc-500 text-xs">Intern project tracker</p>
+            <h1 className="font-bold text-lg leading-none tracking-tight">Phrasia Hopper</h1>
+            <p className="text-zinc-400 text-xs mt-0.5">Intern project tracker</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-zinc-500 text-sm">{user?.email}</span>
-          <button
+        <div className="flex items-center gap-3">
+          <span className="text-zinc-400 text-sm hidden md:block">{user?.email}</span>
+<button
             onClick={() => router.push('/projects/new')}
-            className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
+            className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-zinc-700 dark:hover:bg-zinc-100 transition-colors"
           >
             + New Project
           </button>
           <button
             onClick={handleSignOut}
-            className="text-zinc-500 text-sm hover:text-white transition-colors"
+            className="text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             Sign out
           </button>
@@ -131,10 +132,10 @@ export default function HomePage() {
 
         {/* Welcome */}
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
+          <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
             What's happening at Phrasia
           </h2>
-          <p className="text-zinc-500 mt-2">
+          <p className="text-zinc-500 mt-2 text-sm">
             {counts.active + counts.backlog + counts.idea} projects total
             — {counts.active} active right now
           </p>
@@ -146,17 +147,16 @@ export default function HomePage() {
             <button
               key={cat.status}
               onClick={() => router.push(`/projects?status=${cat.status}`)}
-              className={`${cat.bg} border ${cat.border} ${cat.hover} rounded-2xl p-8 flex flex-col gap-4 text-left transition-all duration-200 hover:scale-[1.02]`}
+              className={`${cat.bg} border ${cat.border} ${cat.hover} rounded-2xl p-8 flex flex-col gap-4 text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-md`}
             >
-              {/* Big number */}
-              <div className={`text-6xl font-bold tracking-tighter ${cat.text}`}>
+              <div className={`text-6xl font-bold tracking-tighter ${cat.accent}`}>
                 {cat.count}
               </div>
               <div>
-                <div className="text-white font-semibold text-lg">{cat.label}</div>
+                <div className="font-semibold text-lg text-zinc-900 dark:text-white">{cat.label}</div>
                 <div className="text-zinc-500 text-sm mt-0.5">{cat.description}</div>
               </div>
-              <div className={`text-sm ${cat.text} mt-auto`}>
+              <div className={`text-sm ${cat.accent} mt-auto font-medium`}>
                 View all →
               </div>
             </button>
@@ -166,10 +166,10 @@ export default function HomePage() {
         {/* Recent activity */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg">Recently added</h3>
+            <h3 className="font-semibold text-lg text-zinc-900 dark:text-white">Recently added</h3>
             <button
               onClick={() => router.push('/projects')}
-              className="text-zinc-500 text-sm hover:text-white transition-colors"
+              className="text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white transition-colors"
             >
               View all →
             </button>
@@ -177,25 +177,25 @@ export default function HomePage() {
 
           <div className="flex flex-col gap-2">
             {recent.length === 0 && (
-              <p className="text-zinc-600 text-sm">No projects yet — add one above</p>
+              <p className="text-zinc-400 text-sm">No projects yet — add one above</p>
             )}
             {recent.map(p => (
               <button
                 key={p.id}
                 onClick={() => router.push(`/projects/${p.id}`)}
-                className="flex items-center justify-between bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl px-5 py-4 transition-colors text-left"
+                className="flex items-center justify-between bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 rounded-xl px-5 py-4 transition-colors text-left"
               >
                 <div className="flex items-center gap-4">
-                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full ${
-                    p.status === 'active'  ? 'bg-emerald-950 text-emerald-400' :
-                    p.status === 'backlog' ? 'bg-amber-950 text-amber-400' :
-                    'bg-purple-950 text-purple-400'
+                  <span className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                    p.status === 'active'  ? 'bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300' :
+                    p.status === 'backlog' ? 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300' :
+                    'bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300'
                   }`}>
                     {p.status}
                   </span>
-                  <span className="font-medium text-white">{p.title}</span>
+                  <span className="font-medium text-zinc-900 dark:text-white text-sm">{p.title}</span>
                 </div>
-                <span className="text-zinc-600 text-sm">{p.owner_name}</span>
+                <span className="text-zinc-400 text-sm">{p.owner_name}</span>
               </button>
             ))}
           </div>
